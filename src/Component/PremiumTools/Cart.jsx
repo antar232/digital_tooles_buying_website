@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 
 const Cart = ({ carts, setCarts, setActiveTab }) => {
+   
+    const [isProcessing, setIsProcessing] = useState(false);
 
     const handleRemove = (id) => {
         const remaining = carts.filter(item => item.id !== id);
@@ -10,18 +12,22 @@ const Cart = ({ carts, setCarts, setActiveTab }) => {
     }
 
     const handleCheckout = () => {
-    if (carts.length > 0) {
-        toast.success("Purchase Successful! Thank you.");
-        setCarts([]); 
-        setActiveTab('premium'); 
+        if (carts.length > 0) {
+            setIsProcessing(true); 
+
+            setTimeout(() => {
+                toast.success("Purchase Successful! Thank you.");
+                setCarts([]); 
+                setIsProcessing(false); 
+                setActiveTab('premium'); 
+            }, 2000);
+        }
     }
-}
 
     const totalPrice = carts.reduce((total, item) => total + item.price, 0);
 
     return (
         <div className="text-center py-12 px-4 bg-white min-h-screen">
-          
             <div className="mb-10">
                 <h2 className="text-4xl font-extrabold text-slate-900 mb-2">Premium Digital Tools</h2>
                 <p className="text-gray-400 text-lg max-w-xl mx-auto">
@@ -44,6 +50,7 @@ const Cart = ({ carts, setCarts, setActiveTab }) => {
                 </button>
             </div>
 
+            {/* Cart Items Container */}
             <div className="max-w-4xl mx-auto bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
                 <h3 className="text-left text-xl font-bold mb-6 text-slate-800">Your Cart</h3>
                 
@@ -60,7 +67,8 @@ const Cart = ({ carts, setCarts, setActiveTab }) => {
                                 </div>
                                 <button 
                                     onClick={() => handleRemove(item.id)}
-                                    className="text-pink-500 font-bold hover:underline text-sm"
+                                    className="text-pink-500 font-bold hover:underline text-sm disabled:opacity-50"
+                                    disabled={isProcessing} 
                                 >
                                     Remove
                                 </button>
@@ -72,17 +80,28 @@ const Cart = ({ carts, setCarts, setActiveTab }) => {
                                 <span className="text-gray-400 font-medium">Total:</span>
                                 <span className="text-2xl font-black text-slate-900">${totalPrice.toFixed(2)}</span>
                             </div>
+                          
                             <button 
                                 onClick={handleCheckout}
-                                className="w-full bg-[#7F3DFF] text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-[#6A2EE0] transition-all active:scale-[0.98]"
+                                disabled={isProcessing}
+                                className={`w-full text-white py-4 rounded-2xl font-bold text-lg shadow-lg transition-all active:scale-[0.98] flex justify-center items-center gap-3 ${
+                                    isProcessing ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#7F3DFF] hover:bg-[#6A2EE0]'
+                                }`}
                             >
-                                Proceed To Checkout
+                                {isProcessing ? (
+                                    <>
+                                        <span className="loading loading-spinner loading-md"></span>
+                                        Processing Order...
+                                    </>
+                                ) : (
+                                    "Proceed To Checkout"
+                                )}
                             </button>
                         </div>
                     </div>
                 ) : (
-       
                     <div className="py-20">
+                        <div className="text-7xl mb-6 opacity-30">🛒</div>
                         <p className="text-gray-400 text-lg">Your cart is empty!</p>
                         <button 
                             onClick={() => setActiveTab('premium')}

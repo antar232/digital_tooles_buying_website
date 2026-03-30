@@ -8,6 +8,8 @@ import PremiumTools from './Component/PremiumTools/PremiumTools'
 import Cart from './Component/PremiumTools/Cart'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import GetStartedPage from './Component/GetStartedPage/GetStartedPage'
+import PricingPage from './Component/PricingPage/PricingPage'
 
 const getPremiumTools = async () => {
   const res = await fetch("./data.json");
@@ -38,7 +40,9 @@ function App() {
           <Cart carts={carts} setCarts={setCarts} setActiveTab={setActiveTab} />
         )}
       </main>
-
+      
+      <GetStartedPage></GetStartedPage>
+      <PricingPage></PricingPage>
       <CTASection />
       <ToastContainer position="top-center" autoClose={2000} />
       <Footer />
